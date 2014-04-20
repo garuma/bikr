@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{26715072-61AE-42BB-92AB-78B77CF0A79F}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Bikr</RootNamespace>
+    <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
+    <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
+    <AndroidResgenClass>Resource</AndroidResgenClass>
+    <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
+    <AndroidApplication>True</AndroidApplication>
+    <AndroidUseLatestPlatformSdk>False</AndroidUseLatestPlatformSdk>
+    <AssemblyName>Bikr</AssemblyName>
+    <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
+    <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
+    <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;__MOBILE__;__ANDROID__;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants>__MOBILE__;__ANDROID__;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AndroidLinkMode>Full</AndroidLinkMode>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Mono.Android" />
+    <Reference Include="GooglePlayServicesLib">
+      <HintPath>..\Components\googleplayservicesjellybean-16.0\lib\android\GooglePlayServicesLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v4">
+      <HintPath>..\Components\xamandroidsupportv4-18-4.19.1.0\lib\android\Xamarin.Android.Support.v4.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLite">
+      <HintPath>..\Components\sqlite-net-1.0.1\lib\android\SQLite.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MainActivity.cs" />
+    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ConnectionUpdateRequest.cs" />
+    <Compile Include="Models\BikeTrip.cs" />
+    <Compile Include="Models\DataApi.cs" />
+    <Compile Include="Models\DateTimeExtensions.cs" />
+    <Compile Include="BikrActivityService.cs" />
+    <Compile Include="ManagerService.cs" />
+    <Compile Include="CircleLinearLayout.cs" />
+    <Compile Include="CircleBadge.cs" />
+    <Compile Include="PreferenceManager.cs" />
+    <Compile Include="ImageUtils.cs" />
+    <Compile Include="WaveDrawable.cs" />
+    <Compile Include="BikrBackupAgent.cs" />
+    <Compile Include="TripDebugLog.cs" />
+    <Compile Include="ServiceUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AboutResources.txt" />
+    <None Include="Properties\AndroidManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\Main.axml" />
+    <AndroidResource Include="Resources\values\Strings.xml" />
+    <AndroidResource Include="Resources\values\theme.xml" />
+    <AndroidResource Include="Resources\drawable-nodpi\main_bg.xml" />
+    <AndroidResource Include="Resources\drawable-nodpi\circle.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_bike.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_bike.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_bike.png" />
+    <AndroidResource Include="Resources\drawable-nodpi\switch_track.xml" />
+    <AndroidResource Include="Resources\drawable-nodpi\switch_thumb.xml" />
+    <AndroidResource Include="Resources\drawable-nodpi\switch_thumb_normal.xml" />
+    <AndroidResource Include="Resources\drawable-nodpi\switch_thumb_selected.xml" />
+    <AndroidResource Include="Resources\drawable-nodpi\switch_thumb_checked.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\icon.png" />
+    <AndroidResource Include="Resources\layout\TrackSwitch.axml" />
+    <AndroidResource Include="Resources\menu\menu.xml" />
+    <AndroidResource Include="Resources\drawable-hdpi\icon_launcher.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\icon_launcher.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\icon_launcher.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\icon_launcher.png" />
+    <AndroidResource Include="Resources\layout\OnBoarding.axml" />
+    <AndroidResource Include="Resources\drawable-hdpi\distance.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\time.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\distance.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\time.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\distance.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\time.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\distance.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\time.png" />
+    <AndroidResource Include="Resources\layout\TripItemLayout.axml" />
+    <AndroidResource Include="Resources\drawable-nodpi\vertical_line.xml" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\icon_notification.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\icon_notification.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\icon_notification.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\icon_notification.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_notif_stop.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_notif_stop.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_notif_stop.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_notif_stop.png" />
+    <AndroidResource Include="Resources\values\ids.xml" />
+    <AndroidResource Include="Resources\values-v19\theme.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Assets\" />
+    <Folder Include="Resources\drawable-hdpi\" />
+    <Folder Include="Resources\drawable-xhdpi\" />
+    <Folder Include="Resources\drawable-xxhdpi\" />
+    <Folder Include="Resources\drawable-xxxhdpi\" />
+    <Folder Include="Resources\menu\" />
+    <Folder Include="Models\" />
+    <Folder Include="Resources\values-v19\" />
+  </ItemGroup>
+  <ItemGroup>
+    <XamarinComponentReference Include="googleplayservicesjellybean">
+      <Version>16.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="xamandroidsupportv4-18">
+      <Version>4.19.1.0</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="sqlite-net">
+      <Version>1.0.1</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+  </ItemGroup>
+</Project>

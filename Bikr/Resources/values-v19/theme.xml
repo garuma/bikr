@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Styles -->
+	<style name="BikrTheme" parent="@style/BikrActionBarTheme">
+		<item name="android:windowTranslucentNavigation">false</item>
+		<item name="android:windowTranslucentStatus">true</item>
+	</style>
+</resources>

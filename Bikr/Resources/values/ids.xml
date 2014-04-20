@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="bikr_notification" />
+	<item type="id" name="bikr_intent_activity" />
+	<item type="id" name="bikr_intent_location" />
+	<item type="id" name="bikr_intent_notification" />
+</resources>
