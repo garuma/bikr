@@ -44,6 +44,9 @@
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
     <Reference Include="Xamarin.Android.NUnitLite" />
+    <Reference Include="SQLite">
+      <HintPath>..\Components\sqlite-net-1.0.1\lib\android\SQLite.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
@@ -59,12 +62,6 @@
       <Link>DateTimeExtensions.cs</Link>
     </Compile>
     <Compile Include="DataApiTests.cs" />
-    <Compile Include="..\..\sqlite-net\src\SQLite.cs">
-      <Link>SQLite.cs</Link>
-    </Compile>
-    <Compile Include="..\..\sqlite-net\src\SQLiteAsync.cs">
-      <Link>SQLiteAsync.cs</Link>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -75,4 +72,11 @@
     <AndroidResource Include="Resources\drawable\Icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
+  <ItemGroup>
+    <XamarinComponentReference Include="sqlite-net">
+      <InstallationInProgress>True</InstallationInProgress>
+      <Version>1.0.1</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
+  </ItemGroup>
 </Project>
