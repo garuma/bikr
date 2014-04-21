@@ -73,6 +73,7 @@
     <Compile Include="BikrBackupAgent.cs" />
     <Compile Include="TripDebugLog.cs" />
     <Compile Include="ServiceUtils.cs" />
+    <Compile Include="ManagerServiceReceiver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
