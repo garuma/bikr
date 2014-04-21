@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Bikr</string>
+	<string name="day_str">Jour</string>
+	<string name="week_str">Semaine</string>
+	<string name="month_str">Mois</string>
+	<string name="onboard_hero">Salut!</string>
+	<string name="onboard_title">Il suffit d\'un bouton pour utiliser Bikr</string>
+	<string name="onboard_subtitle">Vos trajets seront automatiquement détectés</string>
+	<string name="track_enabled">Bikr suit maintenant automatiquement vos trajets</string>
+	<string name="track_disabled">Bikr ne suit plus vos trajets</string>
+	<string name="stop_notif_action">Finir le trajet</string>
+	<string name="notification_title_biking">En train de pédaler</string>
+	<string name="notification_subtitle_biking">Bikr suit actuellement votre trajet.</string>
+	<string name="notification_title_ingrace">En attente d\'information</string>
+	<string name="notification_subtitle_ingrace">Arrêtez votre trajet maintenant ou patientez.</string>
+	<string name="single_trip_notification">Dernier trajet enregistré</string>
+	<string name="multiple_trip_notification">{0} trajets enregistrés</string>
+</resources>

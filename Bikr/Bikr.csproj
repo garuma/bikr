@@ -123,6 +123,7 @@
     <AndroidResource Include="Resources\drawable-hdpi\ic_notif_stop.png" />
     <AndroidResource Include="Resources\values\ids.xml" />
     <AndroidResource Include="Resources\values-v19\theme.xml" />
+    <AndroidResource Include="Resources\values-fr\Strings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
@@ -134,6 +135,7 @@
     <Folder Include="Resources\menu\" />
     <Folder Include="Models\" />
     <Folder Include="Resources\values-v19\" />
+    <Folder Include="Resources\values-fr\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="googleplayservicesjellybean">
