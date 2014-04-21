@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Bikr</string>
+	<string name="day_str">Today</string>
+	<string name="week_str">Week</string>
+	<string name="month_str">Month</string>
+	<string name="onboard_hero">Hi There!</string>
+	<string name="onboard_title">It only takes a switch flip to use Bikr</string>
+	<string name="onboard_subtitle">Your rides will be automatically picked up</string>
 	<string name="track_enabled">Bikr will now automatically track your rides</string>
 	<string name="track_disabled">Bikr won\'t track your rides anymore</string>
 	<string name="stop_notif_action">Finish Ride</string>
@@ -8,4 +14,6 @@
 	<string name="notification_subtitle_biking">Bikr is tracking your current cycle.</string>
 	<string name="notification_title_ingrace">Waiting for activity feedback</string>
 	<string name="notification_subtitle_ingrace">You can stop the trip now or wait a bit.</string>
+	<string name="single_trip_notification">Last trip recorded</string>
+	<string name="multiple_trip_notification">{0} trips recorded</string>
 </resources>

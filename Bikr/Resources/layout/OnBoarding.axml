@@ -14,7 +14,7 @@
         android:id="@+id/onboardingContainer"
         android:layout_marginBottom="16dp">
         <TextView
-            android:text="Hi There!"
+            android:text="@string/onboard_hero"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -29,7 +29,7 @@
             layout="@layout/TrackSwitch"
             android:layout_gravity="center" />
         <TextView
-            android:text="It only takes a switch flip to use Bikr"
+            android:text="@string/onboard_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -42,7 +42,7 @@
             android:shadowDy="4"
             android:shadowRadius="0.1" />
         <TextView
-            android:text="Your rides will be automatically picked up"
+            android:text="@string/onboard_subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

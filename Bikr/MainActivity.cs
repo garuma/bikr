@@ -217,7 +217,12 @@ namespace Bikr
 		{
 			var tt = d.ToString (d.Hours > 0 ? "hh\\hmm" : "mm\\m\\i\\n");
 			var dispDistance = prefs.ConvertDistanceInDisplayUnit (distance) + prefs.GetUnitForDistance (distance); 
-			var msg = string.Format (count <= 1 ? "Last trip recorded" : "{0} trips recorded", count);
+			string msg = null;
+			if (count <= 1)
+				msg = Resources.GetString (Resource.String.single_trip_notification);
+			else
+				msg = Resources.GetString (Resource.String.multiple_trip_notification);
+			msg = string.Format (msg, count);
 			ShowNotification (msg, duration: tt, distance: dispDistance, delay: 2500);
 		}
 

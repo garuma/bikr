@@ -13,6 +13,7 @@ using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Util;
 using Android.Animation;
+using Android.Content.Res;
 
 namespace Bikr
 {
@@ -42,14 +43,23 @@ namespace Bikr
 			base (context, attrs)
 		{
 			Initialize ();
-			desc = (attrs.GetAttributeValue (null, "description") ?? string.Empty).ToUpper ();
+			ProcessAttributeSets (attrs);
 		}
 
 		public CircleBadge (Context context, IAttributeSet attrs, int defStyle) :
 			base (context, attrs, defStyle)
 		{
 			Initialize ();
-			desc = (attrs.GetAttributeValue (null, "description") ?? string.Empty).ToUpper ();
+			ProcessAttributeSets (attrs);
+		}
+
+		void ProcessAttributeSets (IAttributeSet attrs)
+		{
+			var resID = attrs.GetAttributeResourceValue (null, "description", -1);
+			var val = resID == -1 ?
+				attrs.GetAttributeValue (null, "description")
+				: Context.Resources.GetString (resID);
+			desc = (val ?? string.Empty).ToUpper ();
 		}
 
 		void Initialize ()

@@ -17,17 +17,17 @@
             android:id="@+id/dayCircle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            description="Today" />
+            description="@string/day_str" />
         <bikr.CircleBadge
             android:id="@+id/weekCircle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            description="Week" />
+            description="@string/week_str" />
         <bikr.CircleBadge
             android:id="@+id/monthCircle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            description="Month" />
+            description="@string/month_str" />
     </bikr.CircleLinearLayout>
     <LinearLayout
         android:orientation="vertical"
