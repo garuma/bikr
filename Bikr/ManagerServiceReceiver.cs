@@ -1,6 +1,7 @@
 ﻿using System;
 using Android.Content;
 using Android.App;
+using Android.OS;
 
 namespace Bikr
 {
@@ -12,8 +13,8 @@ namespace Bikr
 		{
 			var prefs = new PreferenceManager (context);
 			if (!prefs.FirstTimeAround && prefs.Enabled) {
-				var serviceIntent = new Intent (context, typeof(ManagerService));
-				context.StartService (serviceIntent);
+				var actRecognitionHandler = new ActivityRecognitionHandler (context);
+				actRecognitionHandler.SetTrackingEnabled (true);
 			}
 		}
 	}

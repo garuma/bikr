@@ -64,7 +64,6 @@
     <Compile Include="Models\DataApi.cs" />
     <Compile Include="Models\DateTimeExtensions.cs" />
     <Compile Include="BikrActivityService.cs" />
-    <Compile Include="ManagerService.cs" />
     <Compile Include="CircleLinearLayout.cs" />
     <Compile Include="CircleBadge.cs" />
     <Compile Include="PreferenceManager.cs" />
@@ -74,6 +73,7 @@
     <Compile Include="TripDebugLog.cs" />
     <Compile Include="ServiceUtils.cs" />
     <Compile Include="ManagerServiceReceiver.cs" />
+    <Compile Include="ActivityRecognitionHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

@@ -49,6 +49,8 @@ namespace Bikr
 		View rideInfoPanel;
 		View circlesLayout;
 
+		ActivityRecognitionHandler actRecognitionHandler;
+
 		CircleBadge[] CircleBadges {
 			get {
 				return new int[] {
@@ -307,11 +309,9 @@ namespace Bikr
 
 		void SetTrackingEnabled (bool enabled)
 		{
-			var intent = new Intent (this, typeof(ManagerService));
-			if (enabled)
-				StartService (intent);
-			else
-				StopService (intent);
+			if (actRecognitionHandler == null)
+				actRecognitionHandler = new ActivityRecognitionHandler (this);
+			actRecognitionHandler.SetTrackingEnabled (enabled);
 		}
 	}
 }

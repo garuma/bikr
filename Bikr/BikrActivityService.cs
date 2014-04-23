@@ -28,7 +28,7 @@ namespace Bikr
 	          Label = "Bikr Activity Recognition Service",
 	          Exported = true)]
 	public class BikrActivityService
-		: IntentService, IGooglePlayServicesClientConnectionCallbacks, IGooglePlayServicesClientOnConnectionFailedListener
+		: Service, IGooglePlayServicesClientConnectionCallbacks, IGooglePlayServicesClientOnConnectionFailedListener
 	{
 		public const string FinishTripAction = "BikrActionFinishTrip";
 		const int ExtremeConfidence = 85;
@@ -39,12 +39,12 @@ namespace Bikr
 		static readonly TimeSpan GracePeriod = TimeSpan.FromMinutes (3);
 		static readonly TimeSpan MovingNotBikePeriod = TimeSpan.FromMinutes (2);
 
-		static Handler handler;
 		static PreferenceManager prefs;
 		static PendingIntent callbackIntent;
 
 		static LocationClient client;
 		static ConnectionUpdateRequest currentRequest;
+		static ActivityRecognitionHandler actRecognitionHandler;
 
 		static Location lastLocation, prevStoredLocation;
 		static double currentDistance;
@@ -53,25 +53,53 @@ namespace Bikr
 		static int graceID = int.MinValue;
 		static BikingState currentBikingState;
 
+		Notification.Builder currentBuilder;
+		ServiceHandler serviceHandler;
+		Looper serviceLooper;
+
 		public override void OnCreate ()
 		{
 			base.OnCreate ();
 			if (prefs == null)
 				prefs = new PreferenceManager (this);
-			if (handler == null)
-				handler = new Handler ();
+			var thread = new HandlerThread ("IntentService[BikrActivityService]");
+			thread.Start ();
+			serviceLooper = thread.Looper;
+			serviceHandler = new ServiceHandler (this, serviceLooper);
 		}
 
-		protected override void OnHandleIntent (Intent intent)
+		public override StartCommandResult OnStartCommand (Intent intent, StartCommandFlags flags, int startId)
 		{
-			if (intent == null)
-				return;
-			if (intent.Action == FinishTripAction)
-				FinishTrip ();
-			else if (ActivityRecognitionResult.HasResult (intent))
-				HandleActivityRecognition (intent);
-			else if (intent.HasExtra (LocationClient.KeyLocationChanged))
-				HandleLocationUpdate (intent);
+			var msg = serviceHandler.ObtainMessage ();
+			msg.Arg1 = startId;
+			msg.Obj = intent;
+			serviceHandler.SendMessage (msg);
+
+			return StartCommandResult.NotSticky;
+		}
+
+		bool OnHandleIntent (Intent intent)
+		{
+			if (intent != null) {
+				if (intent.Action == FinishTripAction)
+					FinishTrip ();
+				else if (ActivityRecognitionResult.HasResult (intent))
+					HandleActivityRecognition (intent);
+				else if (intent.HasExtra (LocationClient.KeyLocationChanged))
+					HandleLocationUpdate (intent);
+			}
+
+			return currentBikingState != BikingState.NotBiking;
+		}
+
+		public override void OnDestroy ()
+		{
+			serviceLooper.Quit ();
+		}
+
+		public override IBinder OnBind (Intent intent)
+		{
+			return null;
 		}
 
 		void HandleActivityRecognition (Intent intent)
@@ -84,6 +112,8 @@ namespace Bikr
 			// We don't care about tilting activity
 			if (activity.Type == DetectedActivity.Tilting)
 				return;
+
+			var prevBikingState = currentBikingState;
 
 			switch (currentBikingState) {
 			case BikingState.NotBiking:
@@ -111,8 +141,10 @@ namespace Bikr
 			}
 
 			Log.Debug ("ActivityHandler", "Activity ({0} w/ {1}%): {2} -> {3}",
-			           activity.Type, activity.Confidence, prefs.CurrentBikingState, currentBikingState);
-			prefs.CurrentBikingState = currentBikingState;
+			           activity.Type, activity.Confidence, prevBikingState, currentBikingState);
+
+			if (prevBikingState != currentBikingState)
+				OnBikingStateChanged (prevBikingState, currentBikingState);
 		}
 
 		void CheckDelayedFinishTripConditions (DetectedActivity activity)
@@ -145,13 +177,11 @@ namespace Bikr
 		void StartDelayedFinishTrip (int id, long timeout)
 		{
 			TripDebugLog.DeferredBikeTripEnd ();
+			var handler = new Handler ();
 			handler.PostDelayed (() => {
 				if ((currentBikingState == BikingState.MovingNotOnBike || currentBikingState == BikingState.InGrace)
-				    && id == graceID) {
-
-					prefs.CurrentBikingState = currentBikingState = BikingState.NotBiking;
+				    && id == graceID)
 					FinishTrip ();
-				}
 			}, timeout);
 		}
 
@@ -191,16 +221,19 @@ namespace Bikr
 				};
 				var dataApi = DataApi.Obtain (this);
 				dataApi.AddTrip (trip).Wait ();
-				//new Android.App.Backup.BackupManager (this).DataChanged ();
 
 				TripDebugLog.LogNewTrip (trip.EndTime - trip.StartTime, trip.Distance);
 			}
 
 			lastLocation = null;
 			currentDistance = startFix = currentFix = 0;
-			prefs.CurrentBikingState = currentBikingState = BikingState.NotBiking;
+
+			var oldState = currentBikingState;
+			currentBikingState = BikingState.NotBiking;
+			OnBikingStateChanged (oldState, currentBikingState);
 
 			TripDebugLog.CommitTripLog ();
+			StopSelf ();
 		}
 
 		void SetLocationUpdateEnabled (bool enabled)
@@ -234,11 +267,11 @@ namespace Bikr
 					.SetPriority (LocationRequest.PriorityHighAccuracy);
 				client.RequestLocationUpdates (req, callbackIntent);
 				prevStoredLocation = client.LastLocation;
-				Log.Debug ("LocClient", "Requested updates");
+				Log.Info ("LocClient", "Requested updates");
 			} else {
 				client.RemoveLocationUpdates (callbackIntent);
 				prevStoredLocation = null;
-				Log.Debug ("LocClient", "Finished updates");
+				Log.Info ("LocClient", "Finished updates");
 			}
 			currentRequest = ConnectionUpdateRequest.None;
 			client.Disconnect ();
@@ -258,6 +291,85 @@ namespace Bikr
 		public void OnConnectionFailed (ConnectionResult connectionResult)
 		{
 			ServiceUtils.ResolveConnectionFailed (connectionResult);
+		}
+
+		void OnBikingStateChanged (BikingState previousState, BikingState newState)
+		{
+			if (previousState == BikingState.NotBiking && newState == BikingState.Biking) {
+				// A biking trip was started, decrease activity recognition delay and show notification
+				ShowNotification ();
+				if (actRecognitionHandler == null)
+					actRecognitionHandler = new ActivityRecognitionHandler (this);
+				actRecognitionHandler.SetTrackingEnabled (true, desiredDelay: TrackingDelay.Short);
+			} else if (previousState != BikingState.NotBiking && newState == BikingState.NotBiking) {
+				// A biking trip finished, hide notification and restore old activity recognition delay
+				HideNotification ();
+				if (actRecognitionHandler == null)
+					actRecognitionHandler = new ActivityRecognitionHandler (this);
+				actRecognitionHandler.SetTrackingEnabled (true, desiredDelay: TrackingDelay.Long);
+			} else if (previousState == BikingState.Biking
+			           && (newState == BikingState.InGrace || newState == BikingState.MovingNotOnBike)) {
+				// We were put in grace, update the currently shown notification
+				UpdateNotification (inGrace: true);
+			} else if ((previousState == BikingState.InGrace || previousState == BikingState.MovingNotOnBike)
+			           && newState == BikingState.Biking) {
+				// We were put out of grace, revert the notification to its old style
+				UpdateNotification (inGrace: false);
+			}
+		}
+
+		void ShowNotification ()
+		{
+			currentBuilder = new Notification.Builder (this)
+				.SetContentTitle (Resources.GetString (Resource.String.notification_title_biking))
+				.SetContentText (Resources.GetString (Resource.String.notification_subtitle_biking))
+				.SetSmallIcon (Resource.Drawable.icon_notification)
+				.SetUsesChronometer (true)
+				.SetOngoing (true);
+			var pending = PendingIntent.GetService (
+				this,
+				Resource.Id.bikr_intent_notification,
+				new Intent (FinishTripAction, Android.Net.Uri.Empty, this, typeof (BikrActivityService)),
+				PendingIntentFlags.UpdateCurrent
+			);
+			currentBuilder.AddAction (Resource.Drawable.ic_notif_stop,
+			                          Resources.GetString (Resource.String.stop_notif_action),
+			                          pending);
+			StartForeground (Resource.Id.bikr_notification, currentBuilder.Build ());
+		}
+
+		void HideNotification ()
+		{
+			StopForeground (true);
+			currentBuilder = null;
+		}
+
+		void UpdateNotification (bool inGrace = false)
+		{
+			if (currentBuilder == null)
+				return;
+			var title = inGrace ? Resource.String.notification_title_ingrace : Resource.String.notification_title_biking;
+			var subtitle = inGrace ? Resource.String.notification_subtitle_ingrace : Resource.String.notification_subtitle_biking;
+			currentBuilder
+				.SetContentTitle (Resources.GetString (title))
+				.SetContentText (Resources.GetString (subtitle));
+			StartForeground (Resource.Id.bikr_notification, currentBuilder.Build ());
+		}
+
+		class ServiceHandler : Handler
+		{
+			BikrActivityService svc;
+
+			public ServiceHandler (BikrActivityService svc, Looper looper) : base (looper)
+			{
+				this.svc = svc;
+			}
+
+			public override void HandleMessage (Message msg)
+			{
+				if (!svc.OnHandleIntent ((Intent)msg.Obj))
+					svc.StopSelf (msg.Arg1);
+			}
 		}
 	}
 }
