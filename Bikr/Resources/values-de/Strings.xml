@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="day_str">Heute</string>
+	<string name="week_str">Woche</string>
+	<string name="month_str">Monat</string>
+	<string name="onboard_hero">Hallo!</string>
+	<string name="onboard_title">Du brauchst nur den Schalter umlegen um Bikr zu nutzen</string>
+	<string name="onboard_subtitle">Deine Fahrten werden automatisch gesammelt</string>
+	<string name="track_enabled">Bikr wird sich jetzt automatisch deine Fahrten merken</string>
+	<string name="track_disabled">Bikr wird sich deine Fahrten nicht mehr merken</string>
+	<string name="stop_notif_action">Fahrt beenden</string>
+	<string name="notification_title_biking">Fährt gerade</string>
+	<string name="notification_subtitle_biking">Bikr ist dabei sich deine Radfahrt zu merken.</string>
+	<string name="notification_title_ingrace">Warte auf Feedback</string>
+	<string name="notification_subtitle_ingrace">Du kannst die Fahrt jetzt anhalten oder einen Moment warten.</string>
+	<string name="single_trip_notification">Letzte gemerkte Fahrt</string>
+	<string name="multiple_trip_notification">{0} gemerkte Fahrten</string>
+</resources>
