@@ -125,6 +125,7 @@
     <AndroidResource Include="Resources\values\ids.xml" />
     <AndroidResource Include="Resources\values-v19\theme.xml" />
     <AndroidResource Include="Resources\values-fr\Strings.xml" />
+    <AndroidResource Include="Resources\values-de\Strings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
@@ -137,6 +138,7 @@
     <Folder Include="Models\" />
     <Folder Include="Resources\values-v19\" />
     <Folder Include="Resources\values-fr\" />
+    <Folder Include="Resources\values-de\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="googleplayservicesjellybean">
