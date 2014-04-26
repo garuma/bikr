@@ -34,7 +34,7 @@ namespace Bikr
 				return result;
 			} catch (Exception e) {
 				Log.Error ("Blurrer", "Error while trying to blur, fallbacking. " + e.ToString ());
-				return input;
+				return Bitmap.CreateBitmap (input);
 			}
 		}
 	}
