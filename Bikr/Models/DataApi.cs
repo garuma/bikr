@@ -20,8 +20,8 @@ namespace Bikr
 
 	public class DataApi
 	{
-		const string SumQuery = "select ifnull(sum(distance),0) from BikeTrip where start >= ?";
-		const string SumBetweenQuery = "select ifnull(sum(distance),0) from BikeTrip where start >= ?1 and start <= ?2";
+		const string SumQuery = "select ifnull(sum(distance),0) from BikeTrip where `commit` >= ?";
+		const string SumBetweenQuery = "select ifnull(sum(distance),0) from BikeTrip where `commit` >= ?1 and `commit` <= ?2";
 		string dbPath;
 
 		public DataApi (string dbPath)
