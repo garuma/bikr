@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" package="org.neteril.Bikr" android:versionCode="9">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0.2" package="org.neteril.Bikr" android:versionCode="11">
 	<uses-sdk android:minSdkVersion="17" android:targetSdkVersion="19" />
 	<application android:label="Bikr" android:icon="@drawable/icon_launcher">
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
