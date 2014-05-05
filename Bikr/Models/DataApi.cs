@@ -58,14 +58,24 @@ namespace Bikr
 
 		public async Task AddTrip (BikeTrip trip)
 		{
+			// Sanitize trip date information
 			if (trip.CommitTime == DateTime.MinValue)
 				trip.CommitTime = DateTime.UtcNow;
+			else if (trip.CommitTime.Kind != DateTimeKind.Utc)
+				trip.CommitTime = trip.CommitTime.ToUniversalTime ();
+			if (trip.StartTime.Kind != DateTimeKind.Utc)
+				trip.StartTime = trip.StartTime.ToUniversalTime ();
+			if (trip.EndTime.Kind != DateTimeKind.Utc)
+				trip.EndTime = trip.EndTime.ToUniversalTime ();
+
 			using (var connection = await GrabConnection ().ConfigureAwait (false))
 				await Task.Run (() => connection.Insert (trip)).ConfigureAwait (false);
 		}
 
 		public async Task<List<BikeTrip>> GetTripsAfter (DateTime dt)
 		{
+			if (dt.Kind != DateTimeKind.Utc)
+				dt = dt.ToUniversalTime ();
 			using (var connection = await GrabConnection ().ConfigureAwait (false)) {
 				return await Task.Run (() => connection
 					.Table<BikeTrip> ()
