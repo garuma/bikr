@@ -58,7 +58,8 @@ namespace Bikr
 
 		public async Task AddTrip (BikeTrip trip)
 		{
-			trip.CommitTime = DateTime.UtcNow;
+			if (trip.CommitTime == DateTime.MinValue)
+				trip.CommitTime = DateTime.UtcNow;
 			using (var connection = await GrabConnection ().ConfigureAwait (false))
 				await Task.Run (() => connection.Insert (trip)).ConfigureAwait (false);
 		}
@@ -74,11 +75,14 @@ namespace Bikr
 			}
 		}
 
-		public async Task<TripDistanceStats> GetStats ()
+		public Task<TripDistanceStats> GetStats ()
+		{
+			return GetStats (DateTime.Now);
+		}
+
+		public async Task<TripDistanceStats> GetStats (DateTime now)
 		{
 			using (var connection = await GrabConnection ().ConfigureAwait (false)) {
-				var now = DateTime.Now;
-
 				if (!connection.Table<BikeTrip> ().Any ())
 					return new TripDistanceStats ();
 

@@ -17,13 +17,6 @@ using Android.Gms.Common;
 
 namespace Bikr
 {
-	enum BikingState {
-		NotBiking,
-		Biking,
-		MovingNotOnBike,
-		InGrace,
-	}
-
 	[Service (Name = "bikr.BikrActivityService",
 	          Label = "Bikr Activity Recognition Service",
 	          Exported = true)]

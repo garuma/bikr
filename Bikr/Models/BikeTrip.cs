@@ -3,6 +3,13 @@ using SQLite;
 
 namespace Bikr
 {
+	enum BikingState {
+		NotBiking,
+		Biking,
+		MovingNotOnBike,
+		InGrace,
+	}
+
 	public class BikeTrip
 	{
 		[PrimaryKey, AutoIncrement]

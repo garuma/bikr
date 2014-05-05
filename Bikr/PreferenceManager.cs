@@ -84,19 +84,61 @@ namespace Bikr
 
 		public void SetLastMeasure (string key, double measure)
 		{
+			SetLastMeasure (key, measure, DateTime.Now.Date);
+		}
+
+		internal void SetLastMeasure (string key, double measure, DateTime date)
+		{
 			var prefKey = "Measures-" + key;
 			var editor = Preferences.Edit ();
 			editor.PutFloat (prefKey, (float)measure);
-			editor.PutLong ("lastMeasureTime", DateTime.Now.Date.Ticks);
+			editor.PutLong ("lastMeasureTime", date.Ticks);
 			editor.Commit ();
 		}
 
-		public double GetLastMeasure (string key, TimeSpan validitySpan)
+		public double LastDayMeasure {
+			get {
+				return GetLastDayMeasure (DateTime.Now);
+			}
+		}
+
+		public double LastWeekMeasure {
+			get {
+				return GetLastWeekMeasure (DateTime.Now);
+			}
+		}
+
+		public double LastMonthMeasure {
+			get {
+				return GetLastMonthMeasure (DateTime.Now);
+			}
+		}
+
+		internal double GetLastDayMeasure (DateTime reference)
 		{
-			var dt = new DateTime (Preferences.GetLong ("lastMeasureTime", 0));
-			if (DateTime.Now.Date - dt >= validitySpan)
+			return GetLastMeasure ("day", (now, then) => now.DayStart () == then.DayStart (), reference);
+		}
+
+		internal double GetLastWeekMeasure (DateTime reference)
+		{
+			return GetLastMeasure ("week", (now, then) => now.WeekStart () == then.WeekStart (), reference);
+		}
+
+		internal double GetLastMonthMeasure (DateTime reference)
+		{
+			return GetLastMeasure ("month", (now, then) => now.MonthStart () == then.MonthStart (), reference);
+		}
+
+		double GetLastMeasure (string key, Func<DateTime, DateTime, bool> validityPredicate, DateTime reference)
+		{
+			try {
+				var dt = new DateTime (Preferences.GetLong ("lastMeasureTime", 0));
+				if (!validityPredicate (reference, dt))
+					return 0;
+				return Preferences.GetFloat ("Measures-" + key, 0);
+			} catch {
 				return 0;
-			return Preferences.GetFloat ("Measures-" + key, 0);
+			}
 		}
 
 		public void RegisterListener (ISharedPreferencesOnSharedPreferenceChangeListener listener)

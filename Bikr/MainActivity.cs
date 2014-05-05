@@ -77,9 +77,9 @@ namespace Bikr
 			lastTrip = FindViewById<TextView> (Resource.Id.lastTripText);
 
 			var circles = CircleBadges;
-			circles[0].Distance = prefs.GetLastMeasure ("day", TimeSpan.FromDays (1));
-			circles[1].Distance = prefs.GetLastMeasure ("week", TimeSpan.FromDays (7));
-			circles[2].Distance = prefs.GetLastMeasure ("month", TimeSpan.FromDays (30));
+			circles[0].Distance = prefs.LastDayMeasure;
+			circles[1].Distance = prefs.LastWeekMeasure;
+			circles[2].Distance = prefs.LastMonthMeasure;
 
 			circlesLayout.ViewTreeObserver.AddOnGlobalLayoutListener (this);
 		}
