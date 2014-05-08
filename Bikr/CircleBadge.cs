@@ -203,7 +203,7 @@ namespace Bikr
 			descPaint.GetTextBounds (desc, 0, desc.Length, bounds);
 			canvas.DrawText (desc, center, padding + bounds.Height (), descPaint);
 
-			var dt = prefs.GetDisplayDistance (Distance);
+			var dt = prefs.GetDisplayDistance (Distance, strictValue: true);
 			var unit = prefs.GetUnitForDistance (Distance);
 			digitPaint.GetTextBounds (dt, 0, dt.Length, bounds);
 			canvas.Save ();
