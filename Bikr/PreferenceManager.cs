@@ -33,9 +33,10 @@ namespace Bikr
 			return UseMiles ? "mi" : (distance >= 1000 ? "km" : "m");
 		}
 
-		public string ConvertDistanceInDisplayUnit (double distance)
+		public string GetDisplayDistance (double distance)
 		{
-			return (UseMiles ? distance * 0.00062137 : (distance >= 1000 ? (distance / 1000) : distance)).ToString ("N0");
+			var display = (UseMiles ? distance * 0.00062137 : (distance >= 1000 ? (distance / 1000) : distance)).ToString ("N0");
+			return display == "0" ? "<1" : display;
 		}
 
 		public bool FirstTimeAround {

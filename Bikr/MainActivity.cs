@@ -218,7 +218,7 @@ namespace Bikr
 		void ShowLastTripNotification (TimeSpan d, int count, double distance)
 		{
 			var tt = d.ToString (d.Hours > 0 ? "hh\\hmm" : "mm\\m\\i\\n");
-			var dispDistance = prefs.ConvertDistanceInDisplayUnit (distance) + prefs.GetUnitForDistance (distance); 
+			var dispDistance = prefs.GetDisplayDistance (distance) + prefs.GetUnitForDistance (distance);
 			string msg = null;
 			if (count <= 1)
 				msg = Resources.GetString (Resource.String.single_trip_notification);
@@ -279,7 +279,7 @@ namespace Bikr
 					{ circles[2], stats.Monthly },
 				};
 				foreach (var map in mapping) {
-					if ((int)map.Value != (int)map.Key.Distance)
+					if (prefs.GetDisplayDistance (map.Value) != prefs.GetDisplayDistance (map.Key.Distance))
 						map.Key.SetDistanceAnimated (map.Value, startDelay: 100);
 				}
 				prefs.SetLastMeasure ("day", stats.Daily);
