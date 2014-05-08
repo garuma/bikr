@@ -27,6 +27,7 @@ namespace Bikr
 		const int ExtremeConfidence = 85;
 		const int StrongConfidence = 75;
 		const int WeakConfidence = 25;
+		const int MinimumDistanceForTrip = 500;
 
 		static readonly DateTime Epoch = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 		static readonly TimeSpan GracePeriod = TimeSpan.FromMinutes (3);
@@ -206,7 +207,7 @@ namespace Bikr
 			SetLocationUpdateEnabled (false);
 
 			// Do we have a trip?
-			if (lastLocation != null && currentDistance > 0 && currentFix > startFix) {
+			if (lastLocation != null && currentDistance > MinimumDistanceForTrip && currentFix > startFix) {
 				var trip = new BikeTrip {
 					Distance = currentDistance,
 					StartTime = Epoch + TimeSpan.FromMilliseconds (startFix),
