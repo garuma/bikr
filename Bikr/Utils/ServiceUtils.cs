@@ -16,11 +16,9 @@ namespace Bikr
 	{
 		public static void ResolveConnectionFailed (ConnectionResult connectionResult)
 		{
-			if (connectionResult.HasResolution) {
-
-			} else {
-
-			}
+			// TODO: resolution needs an activity to implement error resolution, need to work on that
+			// for now we just log the error
+			Android.Util.Log.Error ("ServiceUtils", "Connection error, {0}", connectionResult.ErrorCode);
 		}
 	}
 }

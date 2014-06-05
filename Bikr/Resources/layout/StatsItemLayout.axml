@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
+    <TextView
+        android:text="Per Days"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/statTitle"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:textSize="28sp"
+        android:layout_marginBottom="8dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/statEntry1"
+        android:layout_gravity="center"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="24dp">
+        <TextView
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/numericValue"
+            android:textStyle="bold"
+            android:textSize="90sp"
+            android:textColor="@color/highlight_text_color" />
+        <TextView
+            android:text="mi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/unitText"
+            android:textColor="@color/primary_text_color"
+            android:translationY="8dp"
+            android:textSize="16sp" />
+        <TextView
+            android:text="this week"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/statDesc"
+            android:textColor="@color/highlight_text_color"
+            android:textSize="26sp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="16dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/statEntry2"
+        android:layout_gravity="center"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="24dp">
+        <TextView
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/numericValue"
+            android:textStyle="bold"
+            android:textSize="90sp"
+            android:textColor="@color/highlight_text_color" />
+        <TextView
+            android:text="mi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/unitText"
+            android:textColor="@color/primary_text_color"
+            android:translationY="8dp"
+            android:textSize="16sp" />
+        <TextView
+            android:text="this month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/statDesc"
+            android:textColor="@color/highlight_text_color"
+            android:textSize="26sp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="16dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/statEntry3"
+        android:layout_gravity="center"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="24dp">
+        <TextView
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/numericValue"
+            android:textStyle="bold"
+            android:textSize="90sp"
+            android:textColor="@color/highlight_text_color" />
+        <TextView
+            android:text="mi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/unitText"
+            android:textColor="@color/primary_text_color"
+            android:translationY="8dp"
+            android:textSize="16sp" />
+        <TextView
+            android:text="this month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/statDesc"
+            android:textColor="@color/highlight_text_color"
+            android:textSize="26sp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="16dp" />
+    </LinearLayout>
+</LinearLayout>

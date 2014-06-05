@@ -20,8 +20,8 @@ namespace Bikr
 		Context context;
 		int width, height;
 
-		static readonly Color BackgroundColor = Color.Rgb (0x4f, 0x65, 0x82);
-		static readonly Color BubbleColor = Color.Rgb (0xad, 0xad, 0xad);
+		readonly Color BackgroundColor;
+		readonly Color BubbleColor;
 		Paint paint;
 		Paint bubblePaint;
 
@@ -48,6 +48,9 @@ namespace Bikr
 			this.context = context;
 
 			this.C = ComputeIdealSpeed ();
+
+			BackgroundColor = context.Resources.GetColor (Resource.Color.secondary_background);
+			BubbleColor = context.Resources.GetColor (Resource.Color.bubble_color);
 
 			paint = new Paint {
 				Color = BackgroundColor,

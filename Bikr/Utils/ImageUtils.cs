@@ -37,6 +37,16 @@ namespace Bikr
 				return Bitmap.CreateBitmap (input);
 			}
 		}
+
+		public static Color InterpolateColor (float ratio, Color c1, Color c2)
+		{
+			ratio = Math.Max (0, Math.Min (1, ratio));
+			return new Color (
+				(int)(ratio * (c2.R - c1.R)) + c1.R,
+				(int)(ratio * (c2.G - c1.G)) + c1.G,
+				(int)(ratio * (c2.B - c1.B)) + c1.B
+			);
+		}
 	}
 }
 

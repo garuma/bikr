@@ -16,4 +16,10 @@
 	<string name="notification_subtitle_ingrace">You can stop the trip now or wait a bit.</string>
 	<string name="single_trip_notification">Last trip recorded</string>
 	<string name="multiple_trip_notification">{0} trips recorded</string>
+	<string name="stat_section_daily">Daily Distances</string>
+	<string name="stat_section_mean">Average Trip</string>
+	<string name="stat_section_best">Best Trip</string>
+	<string name="stat_desc_today">today</string>
+	<string name="stat_desc_this_week">this week</string>
+	<string name="stat_desc_this_month">this month</string>
 </resources>

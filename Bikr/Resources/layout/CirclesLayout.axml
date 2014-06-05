@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingTop="88dp">
+    <bikr.CircleLinearLayout
+        android:id="@+id/circlesLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="4dp">
+        <bikr.CircleBadge
+            android:id="@+id/dayCircle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            description="@string/day_str" />
+        <bikr.CircleBadge
+            android:id="@+id/weekCircle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            description="@string/week_str" />
+        <bikr.CircleBadge
+            android:id="@+id/monthCircle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            description="@string/month_str" />
+    </bikr.CircleLinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/notificationPanel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="12dp">
+        <TextView
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lastTripText"
+            android:fontFamily="sans-serif-condensed"
+            android:layout_gravity="center"
+            android:textSize="18sp"
+            android:layout_marginBottom="2dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/rideInfoPanel"
+            android:visibility="invisible">
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/distanceText"
+                android:fontFamily="sans-serif-condensed"
+                android:layout_gravity="center"
+                android:drawablePadding="3dp"
+                android:textSize="16sp"
+                android:drawableStart="@drawable/distance"
+                android:layout_marginRight="8dp" />
+            <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/timeText"
+                android:fontFamily="sans-serif-condensed"
+                android:layout_gravity="center"
+                android:drawableStart="@drawable/time"
+                android:drawablePadding="3dp"
+                android:textSize="16sp"
+                android:layout_marginLeft="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

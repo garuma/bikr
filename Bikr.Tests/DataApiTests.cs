@@ -155,6 +155,44 @@ namespace Bikr.Tests
 			var t = trips [0];
 			Assert.That (t.CommitTime, Is.GreaterThan (DateTime.Now.AddMinutes (-1)));
 		}
+
+		[Test]
+		public void GetAggregatedStatsTest ()
+		{
+			var month = new DateTime (2014, 04, 02);
+			api.AddTrip (new BikeTrip {
+				Distance = 1200,
+				StartTime = month,
+				EndTime = month + TimeSpan.FromMinutes (45),
+				CommitTime = month + TimeSpan.FromMinutes (45),
+			}).Wait ();
+			var week = new DateTime (2014, 04, 15);
+			api.AddTrip (new BikeTrip {
+				Distance = 1400,
+				StartTime = week,
+				EndTime = week + TimeSpan.FromHours (1),
+				CommitTime = week + TimeSpan.FromHours (1),
+			}).Wait ();
+			var now = new DateTime (2014, 04, 18, 10, 00, 02);
+			api.AddTrip (new BikeTrip {
+				Distance = 1600,
+				StartTime = now - TimeSpan.FromHours (2),
+				EndTime = now - TimeSpan.FromHours (1),
+				CommitTime = now - TimeSpan.FromHours (1),
+			}).Wait ();
+			api.AddTrip (new BikeTrip {
+				Distance = 1800,
+				StartTime = now - TimeSpan.FromHours (1),
+				EndTime = now,
+				CommitTime = now,
+			}).Wait ();
+
+			var stats = api.GetAggregatedStats (now).Result;
+
+			// Daily
+			Assert.AreEqual ((1400 + 1600 + 1800) / 6, (int)stats[AggregatedStatsKey.DailyThisWeek]);
+			Assert.AreEqual ((1200 + 1400 + 1600 + 1800) / 18, (int)stats [AggregatedStatsKey.DailyThisMonth]);
+		}
 	}
 }
 

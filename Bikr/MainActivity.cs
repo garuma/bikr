@@ -27,16 +27,9 @@ namespace Bikr
 	           MainLauncher = true,
 	           Theme = "@style/BikrTheme",
 	           ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize)]
-	public class MainActivity
-		: Activity, ViewTreeObserver.IOnGlobalLayoutListener, IDialogInterfaceOnCancelListener
+	public class MainActivity : Android.Support.V4.App.FragmentActivity, IDialogInterfaceOnCancelListener
 	{
 		const int GooglePlayServiceResult = 1000;
-
-		int[] circleIds = new int[] {
-			Resource.Id.dayCircle,
-			Resource.Id.weekCircle,
-			Resource.Id.monthCircle,
-		};
 
 		Handler handler;
 		PreferenceManager prefs;
@@ -44,22 +37,14 @@ namespace Bikr
 		bool delayOnBoarding, firstCreate;
 
 		Switch trackSwitch;
-		TextView lastTrip;
-		View notificationPanel;
-		View rideInfoPanel;
-		View circlesLayout;
+		Android.Support.V4.View.ViewPager pager;
+		DynamicGradientDrawable background;
 
 		ActivityRecognitionHandler actRecognitionHandler;
 
-		CircleBadge[] CircleBadges {
-			get {
-				return new int[] {
-					Resource.Id.dayCircle,
-					Resource.Id.weekCircle,
-					Resource.Id.monthCircle,
-				}.Select (id => FindViewById<CircleBadge> (id)).ToArray ();
-			}
-		}
+		CirclesFragment circlesFragment;
+		StatsFragment statsFragment;
+		ActionBar.Tab circlesTab, statsTab;
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -69,26 +54,53 @@ namespace Bikr
 			handler = new Handler ();
 			prefs = new PreferenceManager (this);
 
+			circlesFragment = new CirclesFragment ();
+			statsFragment = new StatsFragment ();
+
 			SetContentView (Resource.Layout.Main);
 
-			circlesLayout = FindViewById (Resource.Id.circlesLayout);
-			notificationPanel = FindViewById (Resource.Id.notificationPanel);
-			rideInfoPanel = FindViewById (Resource.Id.rideInfoPanel);
-			lastTrip = FindViewById<TextView> (Resource.Id.lastTripText);
+			pager = FindViewById<Android.Support.V4.View.ViewPager> (Resource.Id.mainPager);
+			pager.Adapter = new StaticFragmentPagerAdapter (SupportFragmentManager, circlesFragment, statsFragment);
 
-			var circles = CircleBadges;
-			circles[0].Distance = prefs.LastDayMeasure;
-			circles[1].Distance = prefs.LastWeekMeasure;
-			circles[2].Distance = prefs.LastMonthMeasure;
+			background = new DynamicGradientDrawable (Resources.GetColor (Resource.Color.top_shade_1),
+			                                          Resources.GetColor (Resource.Color.bottom_shade_1),
+			                                          Resources.GetColor (Resource.Color.top_shade_2),
+			                                          Resources.GetColor (Resource.Color.bottom_shade_2));
+			pager.SetBackgroundDrawable (background);
+			pager.PageScrolled += HandlePageScrolled;
+			pager.OverScrollMode = OverScrollMode.Never;
+			if (prefs.FirstTimeAround)
+				pager.Touch += DiscardTouchEventHandler;
 
-			circlesLayout.ViewTreeObserver.AddOnGlobalLayoutListener (this);
+			circlesTab = ActionBar.NewTab ().SetIcon (Resource.Drawable.ic_tab_circles);
+			statsTab = ActionBar.NewTab ().SetIcon (Resource.Drawable.ic_tab_stats);
+			circlesTab.TabSelected += (sender, e) => pager.SetCurrentItem (0, true);
+			statsTab.TabSelected += (sender, e) => pager.SetCurrentItem (1, true);
+			ActionBar.AddTab (circlesTab);
+			ActionBar.AddTab (statsTab);
+			pager.PageSelected += (sender, e) => ActionBar.SetSelectedNavigationItem (e.Position);
+
+			circlesFragment.CirclesReady += OnCirclesReady;
+		}
+
+		void DiscardTouchEventHandler (object sender, View.TouchEventArgs e)
+		{
+			e.Handled = true;
+		}
+
+		void HandlePageScrolled (object sender, Android.Support.V4.View.ViewPager.PageScrolledEventArgs e)
+		{
+			var offset = e.Position == 0 ? e.PositionOffset : 1f;
+			background.SetGradientRatio (offset);
+			ActionBar.GetTabAt (0).Icon.SetAlpha (255 - (int)(offset * 200));
+			ActionBar.GetTabAt (1).Icon.SetAlpha (55 + (int)(offset * 200));
 		}
 
 		protected override void OnResume ()
 		{
 			base.OnResume ();
 			if (!firstCreate)
-				LoadData ();
+				circlesFragment.LoadData (this);
 			var avail = GooglePlayServicesUtil.IsGooglePlayServicesAvailable (this);
 			if (avail == ConnectionResult.Success) {
 				if (prefs.Enabled)
@@ -115,54 +127,30 @@ namespace Bikr
 			}
 			delayOnBoarding = false;
 			if (prefs.FirstTimeAround)
-				ShowOnboarding ();
+				ShowOnboarding (circlesFragment.View);
 			else
 				SetTrackingEnabled (true);
 		}
 
-		public void OnGlobalLayout ()
+		void OnCirclesReady (object sender, EventArgs e)
 		{
-			circlesLayout.ViewTreeObserver.RemoveGlobalOnLayoutListener (this);
-			int delay = 10;
-			var time = Resources.GetInteger (Android.Resource.Integer.ConfigMediumAnimTime);
-			var delayIncr = (3 * time) / 4;
-			var interpolator = new Android.Views.Animations.DecelerateInterpolator ();
-			ViewPropertyAnimator circleAnim = null;
+			var fragment = (CirclesFragment)sender;
+			fragment.CirclesReady -= OnCirclesReady;
 
-			foreach (var id in circleIds) {
-				var circle = circlesLayout.FindViewById (id);
-
-				circle.ScaleX = .3f;
-				circle.ScaleY = .3f;
-				circle.Alpha = 0;
-
-				circleAnim = circle.Animate ()
-					.ScaleX (1)
-					.ScaleY (1)
-					.Alpha (1)
-					.SetStartDelay (delay)
-					.SetDuration (time)
-					.SetInterpolator (interpolator);
-
-				var last = id == circleIds.Last ();
-				if (last) {
-					if (prefs.FirstTimeAround && !delayOnBoarding)
-						circleAnim.WithEndAction (new Run (ShowOnboarding));
-					else if (!prefs.FirstTimeAround)
-						circleAnim.WithEndAction (new Run (LoadData));
-				}
-
-				circleAnim.Start ();
-				delay += delayIncr;
-			}
+			fragment.SetupInitialAnimations (callback: () => {
+				if (prefs.FirstTimeAround && !delayOnBoarding)
+					ShowOnboarding (fragment.View);
+				else if (!prefs.FirstTimeAround)
+					fragment.LoadData (this);
+			});
 
 			firstCreate = false;
 		}
 
-		async void ShowOnboarding ()
+		async void ShowOnboarding (View baseView)
 		{
 			var time = Resources.GetInteger (Android.Resource.Integer.ConfigMediumAnimTime);
-			var rootView = (ViewGroup)notificationPanel.RootView;
+			var rootView = (ViewGroup)baseView.RootView;
 			rootView.DrawingCacheEnabled = true;
 			var cachedBitmap = rootView.DrawingCache;
 			var blurredBack = await Task.Run (() => ImageUtils.Blur (this, cachedBitmap));
@@ -177,6 +165,7 @@ namespace Bikr
 			rootView.AddView (view);
 
 			sw.CheckedChange += (sender, e) => {
+				pager.Touch -= DiscardTouchEventHandler;
 				view.Animate ().Alpha (0).WithEndAction (new Run (() => {
 					rootView.RemoveView (view);
 					prefs.FirstTimeAround = false;
@@ -205,7 +194,8 @@ namespace Bikr
 			Switch s = sender as Switch;
 			prefs.Enabled = s.Checked;
 			var id = s.Checked ? Resource.String.track_enabled : Resource.String.track_disabled;
-			ShowNotification (Resources.GetString (id));
+			if (circlesFragment != null)
+				circlesFragment.ShowNotification (Resources.GetString (id));
 
 			var delayId = ++delayCurrentId;
 			handler.PostDelayed (() => {
@@ -215,103 +205,33 @@ namespace Bikr
 			}, 1000);
 		}
 
-		void ShowLastTripNotification (TimeSpan d, int count, double distance)
-		{
-			var tt = d.ToString (d.Hours > 0 ? "hh\\hmm" : "mm\\m\\i\\n");
-			var dispDistance = prefs.GetDisplayDistance (distance) + prefs.GetUnitForDistance (distance);
-			string msg = null;
-			if (count <= 1)
-				msg = Resources.GetString (Resource.String.single_trip_notification);
-			else
-				msg = Resources.GetString (Resource.String.multiple_trip_notification);
-			msg = string.Format (msg, count);
-			ShowNotification (msg, duration: tt, distance: dispDistance, delay: 2500);
-		}
-
-		void ShowNotification (string notification, string duration = null, string distance = null, int delay = 0)
-		{
-			notificationPanel.TranslationY =
-				notificationPanel.Height + ((LinearLayout.LayoutParams)notificationPanel.LayoutParameters).BottomMargin;
-			notificationPanel.TranslationX = 0;
-			notificationPanel.ScaleX = .9f;
-			notificationPanel.Visibility = ViewStates.Visible;
-			lastTrip.Text = notification;
-			if (duration == null || distance == null)
-				rideInfoPanel.Visibility = ViewStates.Invisible;
-			else {
-				rideInfoPanel.Visibility = ViewStates.Visible;
-				rideInfoPanel.FindViewById<TextView> (Resource.Id.timeText).Text = duration;
-				rideInfoPanel.FindViewById<TextView> (Resource.Id.distanceText).Text = distance;
-			}
-			var time = Resources.GetInteger (Android.Resource.Integer.ConfigLongAnimTime);
-			var decel = new Android.Views.Animations.DecelerateInterpolator ();
-
-			notificationPanel.Animate ().TranslationY (0).ScaleX (1).SetDuration (time).SetStartDelay (delay).SetInterpolator (decel).WithEndAction (new Run (() => {
-				var accel = new Android.Views.Animations.AccelerateInterpolator ();
-				notificationPanel.Animate ()
-					.TranslationX (-Resources.DisplayMetrics.WidthPixels)
-					.SetDuration (time)
-					.SetStartDelay (6000)
-					.SetInterpolator (accel)
-					.WithEndAction (new Run (() => notificationPanel.Visibility = ViewStates.Invisible))
-					.Start ();
-			})).Start ();
-		}
-
-		async void LoadData ()
-		{
-			try {
-				var circles = CircleBadges;
-
-				var dataApi = DataApi.Obtain (this);
-				var stats = await dataApi.GetStats ();
-				/*var stats = new TripDistanceStats {
-					PrevDay = 4500,
-					PrevWeek = 25000,
-					PrevMonth = 100000,
-					Daily = 3500,
-					Weekly = 12000,
-					Monthly = 30000,
-				};*/
-				var mapping = new Dictionary<CircleBadge, double> {
-					{ circles[0], stats.Daily },
-					{ circles[1], stats.Weekly },
-					{ circles[2], stats.Monthly },
-				};
-				foreach (var map in mapping) {
-					if (prefs.GetDisplayDistance (map.Value) != prefs.GetDisplayDistance (map.Key.Distance))
-						map.Key.SetDistanceAnimated (map.Value, startDelay: 100);
-				}
-				prefs.SetLastMeasure ("day", stats.Daily);
-				prefs.SetLastMeasure ("week", stats.Weekly);
-				prefs.SetLastMeasure ("month", stats.Monthly);
-
-				var lastTrips = await dataApi.GetTripsAfter (prefs.LastCheckin);
-				//var lastTrips = new List<BikeTrip> ();
-				if (lastTrips != null && lastTrips.Any ())
-					ShowLastTripNotification (TimeSpan.FromSeconds (lastTrips.Sum (bt => (bt.EndTime - bt.StartTime).TotalSeconds)),
-					                          lastTrips.Count,
-					                          lastTrips.Sum (t => t.Distance));
-				SetCompletionLevel (circles[0], stats.Daily, stats.PrevDay);
-				SetCompletionLevel (circles[1], stats.Weekly, stats.PrevWeek);
-				SetCompletionLevel (circles[2], stats.Monthly, stats.PrevMonth);
-				prefs.LastCheckin = DateTime.UtcNow;
-			} catch (Exception e) {
-				Log.Error ("DataStats", e.ToString ());
-			}
-		}
-
-		void SetCompletionLevel (CircleBadge badge, double actual, double prev)
-		{
-			var ratio = prev > 0 ? Math.Min (1, actual / prev) : 0;
-			handler.PostDelayed (() => badge.SetCompletionRatioAnimated (ratio), 600);
-		}
-
 		void SetTrackingEnabled (bool enabled)
 		{
 			if (actRecognitionHandler == null)
 				actRecognitionHandler = new ActivityRecognitionHandler (this);
 			actRecognitionHandler.SetTrackingEnabled (enabled);
+		}
+	}
+
+	class StaticFragmentPagerAdapter : Android.Support.V4.App.FragmentPagerAdapter
+	{
+		Android.Support.V4.App.Fragment[] fragments;
+
+		public StaticFragmentPagerAdapter (Android.Support.V4.App.FragmentManager fm, params Android.Support.V4.App.Fragment[] fragments)
+			: base (fm)
+		{
+			this.fragments = fragments;
+		}
+
+		public override Android.Support.V4.App.Fragment GetItem (int position)
+		{
+			return fragments [position];
+		}
+
+		public override int Count {
+			get {
+				return fragments.Length;
+			}
 		}
 	}
 }

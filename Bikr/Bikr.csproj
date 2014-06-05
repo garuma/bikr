@@ -59,21 +59,26 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ConnectionUpdateRequest.cs" />
     <Compile Include="Models\BikeTrip.cs" />
     <Compile Include="Models\DataApi.cs" />
     <Compile Include="Models\DateTimeExtensions.cs" />
-    <Compile Include="BikrActivityService.cs" />
-    <Compile Include="CircleLinearLayout.cs" />
-    <Compile Include="CircleBadge.cs" />
     <Compile Include="PreferenceManager.cs" />
-    <Compile Include="ImageUtils.cs" />
-    <Compile Include="WaveDrawable.cs" />
     <Compile Include="BikrBackupAgent.cs" />
-    <Compile Include="TripDebugLog.cs" />
-    <Compile Include="ServiceUtils.cs" />
-    <Compile Include="ManagerServiceReceiver.cs" />
-    <Compile Include="ActivityRecognitionHandler.cs" />
+    <Compile Include="Drawables\WaveDrawable.cs" />
+    <Compile Include="Utils\TripDebugLog.cs" />
+    <Compile Include="Utils\ServiceUtils.cs" />
+    <Compile Include="Utils\ImageUtils.cs" />
+    <Compile Include="Drawables\DynamicGradientDrawable.cs" />
+    <Compile Include="Fragments\CirclesFragment.cs" />
+    <Compile Include="Cycling\BikrActivityService.cs" />
+    <Compile Include="Cycling\ActivityRecognitionHandler.cs" />
+    <Compile Include="Views\CircleBadge.cs" />
+    <Compile Include="Views\CircleLinearLayout.cs" />
+    <Compile Include="Cycling\ConnectionUpdateRequest.cs" />
+    <Compile Include="Cycling\ManagerServiceReceiver.cs" />
+    <Compile Include="Fragments\StatsFragment.cs" />
+    <Compile Include="Views\ScrollBarExtraordinaire.cs" />
+    <Compile Include="Views\SnapScrollView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -112,7 +117,6 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\time.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\distance.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\time.png" />
-    <AndroidResource Include="Resources\layout\TripItemLayout.axml" />
     <AndroidResource Include="Resources\drawable-nodpi\vertical_line.xml" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\icon_notification.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\icon_notification.png" />
@@ -126,6 +130,18 @@
     <AndroidResource Include="Resources\values-v19\theme.xml" />
     <AndroidResource Include="Resources\values-fr\Strings.xml" />
     <AndroidResource Include="Resources\values-de\Strings.xml" />
+    <AndroidResource Include="Resources\layout\CirclesLayout.axml" />
+    <AndroidResource Include="Resources\layout\StatsLayout.axml" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_tab_circles.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_tab_stats.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_tab_circles.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_tab_stats.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_tab_circles.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_tab_stats.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_tab_circles.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_tab_stats.png" />
+    <AndroidResource Include="Resources\drawable-nodpi\ab_tab_bg.xml" />
+    <AndroidResource Include="Resources\layout\StatsItemLayout.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
@@ -139,6 +155,11 @@
     <Folder Include="Resources\values-v19\" />
     <Folder Include="Resources\values-fr\" />
     <Folder Include="Resources\values-de\" />
+    <Folder Include="Views\" />
+    <Folder Include="Drawables\" />
+    <Folder Include="Utils\" />
+    <Folder Include="Fragments\" />
+    <Folder Include="Cycling\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="googleplayservicesjellybean">

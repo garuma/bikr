@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<!-- Colors -->
-	<!---<color name="primary_text_color">#d0cecb</color>-->
 	<color name="primary_text_color">#e0dedb</color>
 	<color name="highlight_text_color">#ffffff</color>
+	<color name="dimmed_text_color">#c0bebb</color>
 	<color name="highlight_color">#bf9d7a</color>
 	<color name="primary_background">#445a77</color>
+	<color name="secondary_background">#4f6582</color>
+	<color name="bubble_color">#adadad</color>
+
+	<color name="top_shade_1">#587daa</color>
+	<color name="bottom_shade_1">#6988b4</color>
+	<color name="top_shade_2">#6988b4</color>
+	<color name="bottom_shade_2">#587daa</color>
+
+	<color name="ab_tab_bg_normal">@android:color/transparent</color>
+	<color name="ab_tab_bg_pressed">#10ffffff</color>
 
 	<dimen name="track_switch_height">24dp</dimen>
 	<dimen name="track_switch_width">24dp</dimen>
@@ -14,9 +24,13 @@
 	<style name="BikrTheme" parent="@style/BikrActionBarTheme" />
 
 	<style name="BikrActionBarTheme" parent="@android:style/Theme.Holo">
+		<item name="android:actionBarSize">40dp</item>
 		<item name="android:actionBarStyle">@style/BikrActionBarStyle</item>
+		<item name="android:actionBarTabStyle">@style/BikrActionBarTabView</item>
+		<item name="android:actionBarTabBarStyle">@style/BikrActionBarTabBar</item>
 		<item name="android:windowBackground">@drawable/main_bg</item>
 		<item name="android:windowActionBarOverlay">true</item>
+		<item name="android:navigationMode">tabMode</item>
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:colorForeground">@color/primary_text_color</item>
 		<item name="android:textColor">@color/primary_text_color</item>
@@ -25,6 +39,7 @@
 	<style name="BikrActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar">
 		<item name="android:titleTextStyle">@style/BikrActionBarTitleStyle</item>
 		<item name="android:background">@android:color/transparent</item>
+		<item name="android:backgroundStacked">@android:color/transparent</item>
 		<item name="android:displayOptions">showTitle|showHome|useLogo</item>
 		<item name="android:logo">@drawable/icon</item>
 	</style>
@@ -37,5 +52,12 @@
 
 	<style name="BikrSwitchTextAppeance" parent="@android:style/TextAppearance.Holo.Small">
 		<item name="android:textColor">@color/primary_text_color</item>
+	</style>
+
+	<style name="BikrActionBarTabView" parent="@android:style/Widget.Holo.ActionBar.TabView">
+		<item name="android:background">@drawable/ab_tab_bg</item>
+	</style>
+
+	<style name="BikrActionBarTabBar" parent="@android:style/Widget.Holo.ActionBar.TabBar">
 	</style>
 </resources>
