@@ -36,17 +36,8 @@ namespace Bikr
 			colors [0] = ImageUtils.InterpolateColor (ratio, topShade1, topShade2).ToArgb ();
 			colors [1] = ImageUtils.InterpolateColor (ratio, bottomShade1, bottomShade2).ToArgb ();
 
-			Console.WriteLine ("t: {0}, b: {1}",
-			                   GetColorString (ImageUtils.InterpolateColor (ratio, topShade1, topShade2)),
-			                   GetColorString (ImageUtils.InterpolateColor (ratio, bottomShade1, bottomShade2)));
-
 			SetColors (colors);
 			InvalidateSelf ();
-		}
-
-		string GetColorString (Color color)
-		{
-			return string.Format ("#{0:x}{1:x}{2:x}", color.R, color.G, color.B);
 		}
 	}
 }
