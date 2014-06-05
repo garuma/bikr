@@ -26,7 +26,8 @@ namespace Bikr
 	[Activity (Label = "Bikr",
 	           MainLauncher = true,
 	           Theme = "@style/BikrTheme",
-	           ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize)]
+	           ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait
+	           /*ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize*/)]
 	public class MainActivity : Android.Support.V4.App.FragmentActivity, IDialogInterfaceOnCancelListener
 	{
 		const int GooglePlayServiceResult = 1000;
