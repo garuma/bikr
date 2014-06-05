@@ -19,6 +19,8 @@
 
 	<dimen name="track_switch_height">24dp</dimen>
 	<dimen name="track_switch_width">24dp</dimen>
+	<dimen name="circles_layout_padding">63dp</dimen>
+	<dimen name="stats_layout_padding">95dp</dimen>
 
 	<!-- Styles -->
 	<style name="BikrTheme" parent="@style/BikrActionBarTheme" />

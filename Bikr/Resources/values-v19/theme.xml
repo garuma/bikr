@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<dimen name="circles_layout_padding">88dp</dimen>
+	<dimen name="stats_layout_padding">120dp</dimen>
+
 	<!-- Styles -->
 	<style name="BikrTheme" parent="@style/BikrActionBarTheme">
 		<item name="android:windowTranslucentNavigation">false</item>

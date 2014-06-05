@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:paddingRight="8dp"
-    android:paddingTop="120dp">
+    android:paddingTop="@dimen/stats_layout_padding">
     <bikr.SnapScrollView
         android:id="@+id/statsList"
         android:layout_width="0px"
