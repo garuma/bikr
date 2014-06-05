@@ -42,8 +42,6 @@ namespace Bikr
 
 		// selected index + scroll delta
 		float scrollPosition;
-		float overscrollAmount, maxOverscrollAmount;
-		ITimeInterpolator overscrollInterpolator;
 
 		public event Action<int> ScrollToIndexRequested;
 
@@ -75,7 +73,6 @@ namespace Bikr
 			knobWidth = TypedValue.ApplyDimension (ComplexUnitType.Dip, 6, Resources.DisplayMetrics);
 			knobPadding = TypedValue.ApplyDimension (ComplexUnitType.Dip, 2, Resources.DisplayMetrics);
 			cornerRadius = TypedValue.ApplyDimension (ComplexUnitType.Dip, 2, Resources.DisplayMetrics);
-			maxOverscrollAmount = TypedValue.ApplyDimension (ComplexUnitType.Dip, 50, Resources.DisplayMetrics);
 
 			normalColor = Resources.GetColor (Resource.Color.dimmed_text_color);
 			selectedColor = Resources.GetColor (Resource.Color.highlight_text_color);
@@ -102,12 +99,6 @@ namespace Bikr
 		public void SetScrollPosition (float scrollPosition)
 		{
 			this.scrollPosition = Math.Max (0, Math.Min (words.Length - 1, scrollPosition));
-			Invalidate ();
-		}
-
-		public void AbsorbOverscroll (float amount)
-		{
-			this.overscrollAmount = amount;
 			Invalidate ();
 		}
 
@@ -221,14 +212,6 @@ namespace Bikr
 				top += extraY;
 				bottom += extraY;
 				bottom += offset * (nextWordHeight - selectedWordHeight);
-			}
-			if (overscrollAmount != 0 && (selectedIndex == 0 || selectedIndex == words.Length - 1)) {
-				var ratio = overscrollInterpolator.GetInterpolation (Math.Min (Math.Abs (overscrollAmount), maxOverscrollAmount) / maxOverscrollAmount);
-				var absorbedLength = ratio * ((bottom - top) / 4);
-				if (overscrollAmount < 0)
-					bottom -= (int)absorbedLength;
-				else
-					top += (int)absorbedLength;
 			}
 
 			canvas.ClipRect (0, top, knobWidth, bottom);
