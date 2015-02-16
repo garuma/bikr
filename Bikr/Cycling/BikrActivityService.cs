@@ -14,6 +14,7 @@ using Android.Locations;
 
 using Android.Gms.Location;
 using Android.Gms.Common;
+using Android.Gms.Common.Apis;
 
 namespace Bikr
 {
@@ -21,7 +22,7 @@ namespace Bikr
 	          Label = "Bikr Activity Recognition Service",
 	          Exported = true)]
 	public class BikrActivityService
-		: Service, IGooglePlayServicesClientConnectionCallbacks, IGooglePlayServicesClientOnConnectionFailedListener
+		: Service, IGoogleApiClientConnectionCallbacks, IGoogleApiClientOnConnectionFailedListener
 	{
 		public const string FinishTripAction = "BikrActionFinishTrip";
 		const int ExtremeConfidence = 85;
@@ -36,7 +37,8 @@ namespace Bikr
 		static PreferenceManager prefs;
 		static PendingIntent callbackIntent;
 
-		static LocationClient client;
+		static IGoogleApiClient client;
+		static IFusedLocationProviderApi api;
 		static ConnectionUpdateRequest currentRequest;
 		static ActivityRecognitionHandler actRecognitionHandler;
 
@@ -54,6 +56,7 @@ namespace Bikr
 		public override void OnCreate ()
 		{
 			base.OnCreate ();
+			api = LocationServices.FusedLocationApi;
 			if (prefs == null)
 				prefs = new PreferenceManager (this);
 			var thread = new HandlerThread ("IntentService[BikrActivityService]");
@@ -79,7 +82,7 @@ namespace Bikr
 					FinishTrip ();
 				else if (ActivityRecognitionResult.HasResult (intent))
 					HandleActivityRecognition (intent);
-				else if (intent.HasExtra (LocationClient.KeyLocationChanged))
+				else if (intent.HasExtra (FusedLocationProviderApi.KeyLocationChanged))
 					HandleLocationUpdate (intent);
 			}
 
@@ -181,7 +184,7 @@ namespace Bikr
 
 		void HandleLocationUpdate (Intent intent)
 		{
-			var newLocation = intent.GetParcelableExtra (LocationClient.KeyLocationChanged).JavaCast<Location> ();
+			var newLocation = intent.GetParcelableExtra (FusedLocationProviderApi.KeyLocationChanged).JavaCast<Location> ();
 			if (lastLocation != null) {
 				if (currentBikingState == BikingState.Biking || currentBikingState == BikingState.InGrace)
 					currentDistance += lastLocation.DistanceTo (newLocation);
@@ -236,7 +239,7 @@ namespace Bikr
 				return;
 			currentRequest = enabled ? ConnectionUpdateRequest.Start : ConnectionUpdateRequest.Stop;
 			if (client == null)
-				client = new LocationClient (this, this, this);
+				client = CreateGoogleClient ();
 			if (!(client.IsConnected || client.IsConnecting))
 				client.Connect ();
 			if (enabled)
@@ -246,6 +249,7 @@ namespace Bikr
 		public void OnConnected (Bundle p0)
 		{
 			Log.Debug ("LocClient", "Connected");
+
 			if (currentRequest == ConnectionUpdateRequest.None)
 				return;
 
@@ -259,11 +263,12 @@ namespace Bikr
 					.SetFastestInterval (2000)
 					.SetSmallestDisplacement (5)
 					.SetPriority (LocationRequest.PriorityHighAccuracy);
-				client.RequestLocationUpdates (req, callbackIntent);
-				prevStoredLocation = client.LastLocation;
+
+				api.RequestLocationUpdates (client, req, callbackIntent);
+				prevStoredLocation = api.GetLastLocation (client);
 				Log.Info ("LocClient", "Requested updates");
 			} else {
-				client.RemoveLocationUpdates (callbackIntent);
+				api.RemoveLocationUpdates (client, callbackIntent);
 				prevStoredLocation = null;
 				Log.Info ("LocClient", "Finished updates");
 			}
@@ -277,14 +282,26 @@ namespace Bikr
 			client = null;
 			// If the client was disconnected too early
 			if (currentRequest != ConnectionUpdateRequest.None) {
-				client = new LocationClient (this, this, this);
+				client = CreateGoogleClient ();
 				client.Connect ();
 			}
+		}
+
+		IGoogleApiClient CreateGoogleClient ()
+		{
+			return new GoogleApiClientBuilder (this, this, this)
+				.AddApi (LocationServices.Api)
+				.Build ();
 		}
 
 		public void OnConnectionFailed (ConnectionResult connectionResult)
 		{
 			ServiceUtils.ResolveConnectionFailed (connectionResult);
+		}
+
+		public void OnConnectionSuspended (int cause)
+		{
+			ServiceUtils.ResolveConnectionSuspended (cause);
 		}
 
 		void OnBikingStateChanged (BikingState previousState, BikingState newState)

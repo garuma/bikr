@@ -20,6 +20,11 @@ namespace Bikr
 			// for now we just log the error
 			Android.Util.Log.Error ("ServiceUtils", "Connection error, {0}", connectionResult.ErrorCode);
 		}
+
+		public static void ResolveConnectionSuspended (int cause)
+		{
+			Android.Util.Log.Warn ("ServiceUtils", "Connection suspended for reason {0}", cause);
+		}
 	}
 }
 

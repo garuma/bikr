@@ -16,6 +16,7 @@ using Run = Java.Lang.Runnable;
 
 using Android.Gms.Location;
 using Android.Gms.Common;
+using Android.Gms.Common.Apis;
 
 namespace Bikr
 {
@@ -24,18 +25,20 @@ namespace Bikr
 		Short = 10000
 	}
 
-	public class ActivityRecognitionHandler : Java.Lang.Object, IGooglePlayServicesClientConnectionCallbacks, IGooglePlayServicesClientOnConnectionFailedListener
+	public class ActivityRecognitionHandler : Java.Lang.Object, IGoogleApiClientConnectionCallbacks, IGoogleApiClientOnConnectionFailedListener
 	{
 		Context context;
 
 		TrackingDelay desiredDelay = TrackingDelay.Long;
-		ActivityRecognitionClient client;
+		IGoogleApiClient client;
+		IActivityRecognitionApi api;
 		ConnectionUpdateRequest currentRequest;
 		PendingIntent callbackIntent;
 
 		public ActivityRecognitionHandler (Context context)
 		{
 			this.context = context;
+			this.api = ActivityRecognition.ActivityRecognitionApi;
 		}
 
 		public void StopCurrentLocationTracking ()
@@ -55,7 +58,7 @@ namespace Bikr
 				return;
 			currentRequest = enabled ? ConnectionUpdateRequest.Start : ConnectionUpdateRequest.Stop;
 			if (client == null)
-				client = new ActivityRecognitionClient (context, this, this);
+				client = CreateGoogleClient ();
 			if (!(client.IsConnected || client.IsConnecting))
 				client.Connect ();
 		}
@@ -71,10 +74,10 @@ namespace Bikr
 				callbackIntent = PendingIntent.GetService (context, Resource.Id.bikr_intent_activity, intent, PendingIntentFlags.UpdateCurrent);
 			}
 			if (currentRequest == ConnectionUpdateRequest.Start) {
-				client.RequestActivityUpdates ((int)desiredDelay, callbackIntent);
+				api.RequestActivityUpdates (client, (int)desiredDelay, callbackIntent);
 				Log.Info ("ActRecognition", "Enabling activity updates w/ {0}", desiredDelay.ToString ());
 			} else {
-				client.RemoveActivityUpdates (callbackIntent);
+				api.RemoveActivityUpdates (client, callbackIntent);
 				Log.Info ("ActRecognition", "Disabling activity updates");
 			}
 			currentRequest = ConnectionUpdateRequest.None;
@@ -87,7 +90,7 @@ namespace Bikr
 			client = null;
 			// If the client was disconnected too early
 			if (currentRequest != ConnectionUpdateRequest.None) {
-				client = new ActivityRecognitionClient (context, this, this);
+				client = CreateGoogleClient ();
 				client.Connect ();
 			}
 		}
@@ -95,6 +98,18 @@ namespace Bikr
 		public void OnConnectionFailed (ConnectionResult connectionResult)
 		{
 			ServiceUtils.ResolveConnectionFailed (connectionResult);
+		}
+
+		public void OnConnectionSuspended (int cause)
+		{
+			ServiceUtils.ResolveConnectionSuspended (cause);
+		}
+
+		IGoogleApiClient CreateGoogleClient ()
+		{
+			return new GoogleApiClientBuilder (context, this, this)
+				.AddApi (ActivityRecognition.Api)
+				.Build ();
 		}
 	}
 }
