@@ -14,29 +14,24 @@ using Android.Widget;
 using Android.Graphics;
 using Android.Animation;
 using Android.Views.Animations;
+using Android.Text;
 
 namespace Bikr
 {
 	public class ScrollBarExtraordinaire : View
 	{
-		struct CharSize {
-			public float Height, Width;
-		}
-
 		string[] words = new string[] {
 			"Day", "Best", "Mean"
 		};
 
-		Dictionary<char, CharSize> charMetrics = new Dictionary<char, CharSize> ();
-		Dictionary<string, float> wordHeights = new Dictionary<string, float> ();
+		Dictionary<string, StaticLayout> textLayouts;
 
 		Color bgColor;
-		Paint textPaint;
+		TextPaint textPaint;
 		Color normalColor, selectedColor;
-		Paint.FontMetrics fontMetrics;
 		Path clipMask;
 
-		float textSize, spacing, letterSpacing;
+		float textSize, spacing;
 		float knobWidth, knobPadding, cornerRadius;
 		int lastTouchX = -1, lastTouchY = -1;
 
@@ -78,15 +73,13 @@ namespace Bikr
 			selectedColor = Resources.GetColor (Resource.Color.highlight_text_color);
 
 			bgColor = Resources.GetColor (Resource.Color.primary_background);
-			textPaint = new Paint { AntiAlias = true };
+			textPaint = new TextPaint { AntiAlias = true };
 			textPaint.SetTypeface (Typeface.Create ("sans-serif-condensed", TypefaceStyle.Normal));
 			textPaint.TextSize = textSize;
 			textPaint.TextAlign = Paint.Align.Center;
 			textPaint.Color = normalColor;
 
-			fontMetrics = textPaint.GetFontMetrics ();
-			letterSpacing = fontMetrics.Bottom;
-			ComputeCharacterSizes ();
+			CreateTextLayouts ();
 		}
 
 		public int SelectedIndex {
@@ -102,33 +95,21 @@ namespace Bikr
 			Invalidate ();
 		}
 
-		void ComputeCharacterSizes ()
+		void CreateTextLayouts ()
 		{
-			var chars = words.SelectMany (w => w.ToCharArray ()).Distinct ().ToArray ();
-			var rect = new Rect ();
-			var array = new char[1];
-			foreach (var c in chars) {
-				array [0] = c;
-				textPaint.GetTextBounds (array, 0, 1, rect);
-				charMetrics [c] = new CharSize { Height = rect.Height (), Width = rect.Width () };
-			}
-		}
-
-		float GetWordHeight (string word)
-		{
-			float result;
-			if (wordHeights.TryGetValue (word, out result))
-				return result;
-
-			result = word.Select (c => charMetrics [c].Height).Sum () + (word.Length - 1) * letterSpacing;
-			wordHeights.Add (word, result);
-
-			return result;
+			textLayouts = words.ToDictionary (
+				w => w,
+				w => new StaticLayout (w, textPaint, 0,
+				                       Android.Text.Layout.Alignment.AlignNormal,
+				                       .80f, 0, false)
+			);
 		}
 
 		protected override void OnMeasure (int widthMeasureSpec, int heightMeasureSpec)
 		{
-			var height = (words.Length - 1) * spacing + words.Select (w => GetWordHeight (w)).Sum () + PaddingTop + PaddingBottom;
+			var height = (words.Length - 1) * spacing
+					+ textLayouts.Values.Sum (l => l.Height)
+					+ PaddingTop + PaddingBottom;
 			SetMeasuredDimension (widthMeasureSpec, MeasureSpec.MakeMeasureSpec ((int)height, MeasureSpecMode.Exactly));
 		}
 
@@ -184,31 +165,26 @@ namespace Bikr
 			float deltaY = PaddingTop;
 			for (int i = 0; i < words.Length; i++) {
 				var word = words [i];
-				var pos = new float[2 * word.Length];
-
-				for (int j = 0; j < word.Length; j++) {
-					var metrics = charMetrics [word [j]];
-					pos [2 * j] = (int)(middleX - metrics.Width / 2);
-					pos [2 * j + 1] = deltaY + metrics.Height;
-					deltaY += metrics.Height;
-					if (j != word.Length - 1)
-						deltaY += letterSpacing;
-				}
+				var layout = textLayouts [word];
 				var colorRatio = Math.Abs (i - selectedIndex) > 1 ? 0 : 1 - Math.Abs (i - scrollPosition);
 				textPaint.Color = ImageUtils.InterpolateColor (colorRatio, normalColor, selectedColor);
-				canvas.DrawPosText (word, pos, textPaint);
-				deltaY += spacing;
+
+				canvas.Save (SaveFlags.Matrix);
+				canvas.Translate (middleX, deltaY);
+				layout.Draw (canvas);
+				canvas.Restore ();
+				deltaY += layout.Height + spacing;
 			}
 
 			// Draw knob
 			canvas.Save ();
-			var top = selectedIndex * spacing + words.Take (selectedIndex).Select (GetWordHeight).Sum () - knobPadding + PaddingTop;
-			var selectedWordHeight = GetWordHeight (words [selectedIndex]);
+			var top = selectedIndex * spacing + words.Take (selectedIndex).Select (w => textLayouts[w].Height).Sum () - knobPadding + PaddingTop;
+			var selectedWordHeight = textLayouts [words [selectedIndex]].Height;
 			var bottom = top + selectedWordHeight + 2 * knobPadding;
 			var offset = scrollPosition - SelectedIndex;
 			if (offset > 0 && selectedIndex < words.Length - 1) {
 				var extraY = offset * (spacing + selectedWordHeight);
-				var nextWordHeight = GetWordHeight (words [selectedIndex + 1]);
+				var nextWordHeight = textLayouts [words [selectedIndex + 1]].Height;
 				top += extraY;
 				bottom += extraY;
 				bottom += offset * (nextWordHeight - selectedWordHeight);
