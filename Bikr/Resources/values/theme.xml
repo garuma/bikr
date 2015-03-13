@@ -36,6 +36,7 @@
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:colorForeground">@color/primary_text_color</item>
 		<item name="android:textColor">@color/primary_text_color</item>
+		<item name="android:textColorPrimary">@color/primary_text_color</item>
 	</style>
 
 	<style name="BikrActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar">

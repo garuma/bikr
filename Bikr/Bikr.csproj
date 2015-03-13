@@ -149,6 +149,7 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_tab_stats.png" />
     <AndroidResource Include="Resources\drawable-nodpi\ab_tab_bg.xml" />
     <AndroidResource Include="Resources\layout\StatsItemLayout.axml" />
+    <AndroidResource Include="Resources\values-v21\theme.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
@@ -167,6 +168,7 @@
     <Folder Include="Utils\" />
     <Folder Include="Fragments\" />
     <Folder Include="Cycling\" />
+    <Folder Include="Resources\values-v21\" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="sqlite-net">

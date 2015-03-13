@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="circles_layout_padding">96dp</dimen>
+	<dimen name="stats_layout_padding">136dp</dimen>
+
+	<color name="background">#587daa</color>
+	<color name="top_shade_1">@color/background</color>
+	<color name="bottom_shade_1">@color/background</color>
+	<color name="top_shade_2">@color/background</color>
+	<color name="bottom_shade_2">@color/background</color>
+
+	<!-- Styles -->
+	<style name="BikrTheme" parent="@style/BikrActionBarTheme">
+		<item name="android:actionBarSize">48dp</item>
+		<item name="android:actionBarStyle">@style/BikrActionBarStyleMaterial</item>
+		<item name="android:colorPrimary">@color/background</item>
+		<item name="android:colorPrimaryDark">#293953</item>
+		<item name="android:colorAccent">@color/highlight_color</item>
+		<item name="android:textColorPrimary">@color/primary_text_color</item>
+		<item name="android:windowBackground">@color/background</item>
+		<item name="android:windowTranslucentNavigation">false</item>
+		<item name="android:windowTranslucentStatus">true</item>
+	</style>
+
+	<style name="BikrActionBarStyleMaterial" parent="@style/BikrActionBarStyle">
+		<item name="android:displayOptions">showTitle</item>
+		<item name="contentInsetStart">16dp</item>
+		<item name="contentInsetEnd">16dp</item>
+	</style>
+
+	<style name="BikrActionBarTitleStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+		<item name="android:textSize">20sp</item>
+		<item name="android:textColor">@color/highlight_color</item>
+	</style>
+</resources>
